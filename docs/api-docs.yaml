@@ -1,0 +1,968 @@
+openapi: 3.0.1
+info:
+  title: Basic Banking System API
+  description: This is API for basic banking system.
+  version: 1.0.0
+  contact:
+    email: wisnuadam21@gmail.com
+servers:
+  - url: http://localhost:3000/api/v1
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Registers a new user with the provided information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: admin@mail.com
+                password:
+                  type: string
+                  example: admin123!
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: User registered successfully
+                  data:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Email already used or bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: email already used!
+                  data:
+                    type: object
+                    example: null
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login as an existing user
+      description: Logs in an existing user with the provided email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: admin@mail.com
+                password:
+                  type: string
+                  example: admin123!
+      responses:
+        "200":
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: User logged in successfully
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTgsImlhdCI6MTcxMzE3OTc3OCwiZXhwIjoxNzEzMTgzMzc4fQ.NirFiu2VQsQesIbAiMcvmeegUlWIYLNGgsCcHz4HSvY"
+        "400":
+          description: Invalid email or password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid email or password
+                  data:
+                    type: object
+                    example: null
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      description: Retrieves all users from the system
+      # parameters:
+      #   - name: search
+      #     in: query
+      #     description: Optional search string to filter users
+      #     required: false
+      #     schema:
+      #       type: string
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Users retrieved successfully
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: You're not authorized
+                  data:
+                    type: object
+                    example: null
+        # "500":
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         type: object
+        #         properties:
+        #           status:
+        #             type: boolean
+        #             example: false
+        #           message:
+        #             type: string
+        #             example: An error occurred while retrieving users
+        #           data:
+        #             type: object
+        #             example: null
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get a user by ID
+      description: Retrieves a user by their ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the user to retrieve
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: User retrieved successfully
+                  data:
+                    $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: You're not authorized
+                  data:
+                    type: object
+                    example: null
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: User not found
+                  data:
+                    type: object
+                    example: null
+        # "500":
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         type: object
+        #         properties:
+        #           status:
+        #             type: boolean
+        #             example: false
+        #           message:
+        #             type: string
+        #             example: An error occurred while retrieving user
+        #           data:
+        #             type: object
+        #             example: null
+  /profiles:
+    post:
+      tags:
+        - Profiles
+      summary: Create a new profile
+      description: Creates a new profile with the provided information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 10
+                identity_type:
+                  type: string
+                  example: SIM ABC
+                identity_number:
+                  type: string # Mengubah type dari integer ke string sesuai contoh
+                  example: "9876543219876" # Mengubah contoh menjadi string dengan tanda kutip
+                address:
+                  type: string
+                  example: Jl. Raya No. 1
+      responses:
+        "201":
+          description: Profile created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Profile created successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 10
+                      identity_type:
+                        type: string
+                        example: SIM ABC
+                      identity_number:
+                        type: string # Mengubah type dari integer ke string
+                        example: "9876543219876" # Mengubah contoh menjadi string dengan tanda kutip
+                      address:
+                        type: string
+                        example: Jl. Raya No. 1
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Bad request
+                  data:
+                    type: object
+                    example: null
+    get:
+      tags:
+        - Profiles
+      summary: Get all profiles
+      description: Retrieves all profiles from the system
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Profiles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Profiles retrieved successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        user_id:
+                          type: integer
+                          example: 10
+                        identity_type:
+                          type: string
+                          example: SIM ABC
+                        identity_number:
+                          type: string # Mengubah type dari integer ke string
+                          example: "9876543219876" # Mengubah contoh menjadi string dengan tanda kutip
+                        address:
+                          type: string
+                          example: Jl. Raya No. 1
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: You're not authorized
+                  data:
+                    type: object
+                    example: null
+        # "500":
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         type: object
+        #         properties:
+        #           status:
+        #             type: boolean
+        #             example: false
+        #           message:
+        #             type: string
+        #             example: An error occurred while retrieving profiles
+        #           data:
+        #             type: object
+        #             example: null
+  /profiles/{id}:
+    get:
+      tags:
+        - Profiles
+      summary: Get a profile by ID
+      description: Retrieves a profile by its ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the profile to retrieve
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Profile retrieved successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 10
+                      identity_type:
+                        type: string
+                        example: SIM ABC
+                      identity_number:
+                        type: string # Mengubah type dari integer ke string
+                        example: "9876543219876" # Mengubah contoh menjadi string dengan tanda kutip
+                      address:
+                        type: string
+                        example: Jl. Raya No. 1
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: You're not authorized
+                  data:
+                    type: object
+                    example: null
+        "404":
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Profile not found
+                  data:
+                    type: object
+                    example: null
+        # "500":
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         type: object
+        #         properties:
+        #           status:
+        #             type: boolean
+        #             example: false
+        #           message:
+        #             type: string
+        #             example: An error occurred while retrieving profile
+        #           data:
+        #             type: object
+        #             example: null
+  /accounts:
+    post:
+      tags:
+        - Bank Accounts
+      summary: Create a new account
+      description: Creates a new account with the provided information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 10
+                balance:
+                  type: number
+                  example: 1000000
+      responses:
+        "201":
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Account created successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 10
+                      balance:
+                        type: number
+                        example: 1000000
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Bad request
+                  data:
+                    type: object
+                    example: null
+    get:
+      tags:
+        - Bank Accounts
+      summary: Get all accounts
+      description: Retrieves all accounts from the system
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Accounts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Accounts retrieved successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        user_id:
+                          type: integer
+                          example: 10
+                        balance:
+                          type: number
+                          example: 1000000
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: You're not authorized
+                  data:
+                    type: object
+                    example: null
+        # "500":
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         type: object
+        #         properties:
+        #           status:
+        #             type: boolean
+        #             example: false
+        #           message:
+        #             type: string
+        #             example: An error occurred while retrieving accounts
+        #           data:
+        #             type: object
+        #             example: null
+  /accounts/{id}:
+    get:
+      tags:
+        - Bank Accounts
+      summary: Get an account by ID
+      description: Retrieves an account by its ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the account to retrieve
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Account retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Account retrieved successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      user_id:
+                        type: integer
+                        example: 10
+                      balance:
+                        type: number
+                        example: 1000000
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: You're not authorized
+                  data:
+                    type: object
+                    example: null
+        "404":
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Account not found
+                  data:
+                    type: object
+                    example: null
+        # "500":
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         type: object
+        #         properties:
+        #           status:
+        #             type: boolean
+        #             example: false
+        #           message:
+        #             type: string
+        #             example: An error occurred while retrieving account
+        #           data:
+        #             type: object
+        #             example: null
+  /transactions:
+    post:
+      tags:
+        - Transactions
+      summary: Create a new transaction
+      description: Creates a new transaction with the provided information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source_account_id:
+                  type: integer
+                  example: 1
+                destination_account_id:
+                  type: integer
+                  example: 2
+                amount:
+                  type: number
+                  example: 100000
+      responses:
+        "201":
+          description: Transaction created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Transaction created successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      source_account_id:
+                        type: integer
+                        example: 1
+                      destination_account_id:
+                        type: integer
+                        example: 2
+                      amount:
+                        type: number
+                        example: 100000
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Bad request
+                  data:
+                    type: object
+                    example: null
+    get:
+      tags:
+        - Transactions
+      summary: Get all transactions
+      description: Retrieves all transactions from the system
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Transactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Transactions retrieved successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        source_account_id:
+                          type: integer
+                          example: 1
+                        destination_account_id:
+                          type: integer
+                          example: 2
+                        amount:
+                          type: number
+                          example: 100000
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: You're not authorized
+                  data:
+                    type: object
+                    example: null
+        # "500":
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         type: object
+        #         properties:
+        #           status:
+        #             type: boolean
+        #             example: false
+        #           message:
+        #             type: string
+        #             example: An error occurred while retrieving transactions
+        #           data:
+        #             type: object
+        #             example: null
+  /transactions/{id}:
+    get:
+      tags:
+        - Transactions
+      summary: Get a transaction by ID
+      description: Retrieves a transaction by its ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the transaction to retrieve
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Transaction retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Transaction retrieved successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      source_account_id:
+                        type: integer
+                        example: 1
+                      destination_account_id:
+                        type: integer
+                        example: 2
+                      amount:
+                        type: number
+                        example: 100000
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: You're not authorized
+                  data:
+                    type: object
+                    example: null
+        "404":
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Transaction not found
+                  data:
+                    type: object
+                    example: null
+        # "500":
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         type: object
+        #         properties:
+        #           status:
+        #             type: boolean
+        #             example: false
+        #           message:
+        #             type: string
+        #             example: An error occurred while retrieving transaction
+        #           data:
+        #             type: object
+        #             example: null
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 7
+        email:
+          type: string
+          example: admin@mail.com

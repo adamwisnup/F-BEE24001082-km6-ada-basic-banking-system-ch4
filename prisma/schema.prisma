@@ -14,11 +14,13 @@ datasource db {
 }
 
 model User {
-  id        Int           @id @default(autoincrement())
-  email     String        @unique
-  password  String
-  accounts  BankAccount[]
-  profile   Profile?
+  id       Int           @id @default(autoincrement())
+  email    String        @unique
+  password String
+  accounts BankAccount[]
+  profile  Profile?
+
+  @@map("users")
 }
 
 model BankAccount {
@@ -30,22 +32,28 @@ model BankAccount {
   balance                 Int
   sourceTransactions      Transaction[] @relation("SourceAccount")
   destinationTransactions Transaction[] @relation("DestinationAccount")
+
+  @@map("bank_accounts")
 }
 
 model Profile {
-  id              Int       @id @default(autoincrement())
-  user            User      @relation(fields: [user_id], references: [id])
-  user_id         Int       @unique
+  id              Int    @id @default(autoincrement())
+  user            User   @relation(fields: [user_id], references: [id])
+  user_id         Int    @unique
   identity_type   String
   identity_number String
   address         String
+
+  @@map("profiles")
 }
 
 model Transaction {
-  id                      Int             @id @default(autoincrement())
-  source_account          BankAccount     @relation("SourceAccount", fields: [source_account_id], references: [id])
-  source_account_id       Int
-  destination_account     BankAccount     @relation("DestinationAccount", fields: [destination_account_id], references: [id])
-  destination_account_id  Int
-  amount                  Float
+  id                     Int         @id @default(autoincrement())
+  source_account         BankAccount @relation("SourceAccount", fields: [source_account_id], references: [id])
+  source_account_id      Int
+  destination_account    BankAccount @relation("DestinationAccount", fields: [destination_account_id], references: [id])
+  destination_account_id Int
+  amount                 Float
+
+  @@map("transactions")
 }

@@ -1,17 +1,17 @@
-const ProfilesQuery = require('../data/query');
+const ProfilesQuery = require("../data/query");
 
 class ProfilesService {
-    async createProfile(data) {
-        return await ProfilesQuery.createProfile(data);
-    }
+  async createProfile(data) {
+    return await ProfilesQuery.createProfile(data);
+  }
 
-    async findAllProfiles() {
-        return await ProfilesQuery.findAllProfiles();
-    }
+  async findAllProfiles() {
+    return await ProfilesQuery.findAllProfiles();
+  }
 
-    async findProfileById(id) {
-        return await ProfilesQuery.findProfileById(id);
-    }
+  async findProfileById(id) {
+    return await ProfilesQuery.findProfileById(id);
+  }
 }
 
 module.exports = new ProfilesService();

@@ -5,21 +5,26 @@ const UserHandler = require("../../feature/users/handler/handler");
 const ProfileHandler = require("../../feature/profiles/handler/handler");
 const BankAccountsHandler = require("../../feature/bank_accounts/handler/handler");
 const TransactionsHandler = require("../../feature/transactions/handler/handler");
+const AuthHandler = require("../../feature/auth/handler/handler");
+const restrict = require("../../middlewares/restrict");
 
-router.post("/users", UserHandler.createUser);
-router.get("/users", UserHandler.findAllUsers);
-router.get("/users/:id", UserHandler.findUserById);
+router.post("/auth/register", AuthHandler.register);
+router.post("/auth/login", AuthHandler.login);
 
-router.post("/profiles", ProfileHandler.createProfile);
-router.get("/profiles", ProfileHandler.findAllProfiles);
-router.get("/profiles/:id", ProfileHandler.findProfileById);
+// router.post("/users",restrict, UserHandler.createUser);
+router.get("/users",restrict, UserHandler.findAllUsers);
+router.get("/users/:id",restrict, UserHandler.findUserById);
 
-router.post("/accounts", BankAccountsHandler.createAccount);
-router.get("/accounts", BankAccountsHandler.findAllAccounts);
-router.get("/accounts/:id", BankAccountsHandler.findAccountById);
+router.post("/profiles",restrict, ProfileHandler.createProfile);
+router.get("/profiles",restrict, ProfileHandler.findAllProfiles);
+router.get("/profiles/:id",restrict, ProfileHandler.findProfileById);
 
-router.post("/transactions", TransactionsHandler.createTransaction);
-router.get("/transactions", TransactionsHandler.findAllTransactions);
-router.get("/transactions/:id", TransactionsHandler.findTransactionById);
+router.post("/accounts",restrict, BankAccountsHandler.createAccount);
+router.get("/accounts",restrict, BankAccountsHandler.findAllAccounts);
+router.get("/accounts/:id",restrict, BankAccountsHandler.findAccountById);
+
+router.post("/transactions",restrict, TransactionsHandler.createTransaction);
+router.get("/transactions",restrict, TransactionsHandler.findAllTransactions);
+router.get("/transactions/:id",restrict, TransactionsHandler.findTransactionById);
 
 module.exports = router;
