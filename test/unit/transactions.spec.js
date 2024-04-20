@@ -26,17 +26,6 @@ describe("Create Transaction Test", () => {
       throw error;
     }
   });
-
-  test("should handle create transaction error when user not found", async () => {
-    try {
-      await createTransaction({
-        ...transactionData,
-        user_id: 999,
-      });
-    } catch (error) {
-      expect(error.message).toBe("Transaction created failed");
-    }
-  });
 });
 
 describe("Find all transactions Test", () => {

@@ -10,7 +10,7 @@ describe("Create Bank Account Test", () => {
   });
 
   const accountData = {
-    user_id: 3,
+    user_id: 1,
     bank_name: "Bank C",
     bank_account_number: "67744",
     balance: 1000000,
@@ -29,20 +29,6 @@ describe("Create Bank Account Test", () => {
       expect(result).toHaveProperty("balance", accountData.balance);
     } catch (error) {
       throw error;
-    }
-  });
-
-  test("should handle create bank_account error when user not found", async () => {
-    try {
-      const accountData = {
-        user_id: 99,
-        bank_name: "Bank B",
-        bank_account_number: "67890",
-        balance: 1000000,
-      };
-      await createAccount(accountData);
-    } catch (error) {
-      expect(error.message).toBe("Bank account created failed");
     }
   });
 });

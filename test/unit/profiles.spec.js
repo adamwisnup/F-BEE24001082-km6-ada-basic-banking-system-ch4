@@ -31,17 +31,6 @@ describe("Create Profile Test", () => {
       throw error;
     }
   });
-
-  // test("should handle create profile error when user not found", async () => {
-  //   try {
-  //     await createProfile({
-  //       ...profileData,
-  //       user_id: 999,
-  //     });
-  //   } catch (error) {
-  //     expect(error.message).toBe("Profile created failed");
-  //   }
-  // });
 });
 
 describe("Find all profiles Test", () => {
